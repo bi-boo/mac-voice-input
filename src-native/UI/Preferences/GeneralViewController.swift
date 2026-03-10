@@ -2,6 +2,25 @@ import AVFoundation
 import Cocoa
 import ServiceManagement
 
+/// 外观感知卡片视图（自动跟随深色/浅色模式切换）
+private class SettingsCardView: NSView {
+    override var wantsUpdateLayer: Bool { true }
+
+    override func updateLayer() {
+        layer?.backgroundColor = NSColor.controlBackgroundColor.cgColor
+        layer?.cornerRadius = 10
+    }
+}
+
+/// 外观感知分隔线（自动跟随深色/浅色模式切换）
+private class SeparatorLineView: NSView {
+    override var wantsUpdateLayer: Bool { true }
+
+    override func updateLayer() {
+        layer?.backgroundColor = NSColor.separatorColor.cgColor
+    }
+}
+
 class GeneralViewController: NSViewController {
 
     // 快捷键组件
@@ -53,19 +72,16 @@ class GeneralViewController: NSViewController {
 
         // 辅助方法：创建卡片容器
         func createCard() -> NSView {
-            let card = NSView()
+            let card = SettingsCardView()
             card.wantsLayer = true
-            card.layer?.backgroundColor = NSColor.controlBackgroundColor.cgColor
-            card.layer?.cornerRadius = 10
             card.translatesAutoresizingMaskIntoConstraints = false
             return card
         }
 
         // 辅助方法：创建卡片内分隔线
         func createCardSeparator() -> NSView {
-            let separator = NSView()
+            let separator = SeparatorLineView()
             separator.wantsLayer = true
-            separator.layer?.backgroundColor = NSColor.separatorColor.cgColor
             separator.translatesAutoresizingMaskIntoConstraints = false
             separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
             return separator
@@ -439,4 +455,5 @@ class GeneralViewController: NSViewController {
         refreshPermissions()
         loadLaunchAtLoginState()
     }
+
 }

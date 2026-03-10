@@ -125,7 +125,7 @@ class InputWindowController: NSObject {
         let micIcon = NSImageView()
         micIcon.image = NSImage(systemSymbolName: "mic.fill", accessibilityDescription: "语音输入")
         micIcon.contentTintColor = .secondaryLabelColor
-        micIcon.symbolConfiguration = NSImage.SymbolConfiguration(pointSize: 12, weight: .semibold)
+        micIcon.symbolConfiguration = NSImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
         micIcon.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(micIcon)
 

@@ -118,16 +118,16 @@ class SimpleInputWindowController: NSObject {
         hintLabel!.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(hintLabel!)
 
-        // Auto Layout 约束
+        // Auto Layout 约束（内边距与 InputWindowController 统一为 20pt）
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: container.topAnchor, constant: 24),
-            scrollView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 24),
-            scrollView.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -24),
+            scrollView.topAnchor.constraint(equalTo: container.topAnchor, constant: 20),
+            scrollView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
+            scrollView.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
             scrollView.bottomAnchor.constraint(equalTo: hintLabel!.topAnchor, constant: -6),
 
             hintLabel!.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -10),
-            hintLabel!.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 24),
-            hintLabel!.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -24),
+            hintLabel!.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
+            hintLabel!.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
         ])
     }
 
@@ -217,7 +217,7 @@ class SimpleInputWindowController: NSObject {
     private func resizeWindowIfNeeded() {
         guard let window = window else { return }
 
-        let textPadding: CGFloat = 24
+        let textPadding: CGFloat = 20
         let windowWidth = window.frame.width
         let textAreaWidth = windowWidth - textPadding * 2
 
@@ -230,9 +230,9 @@ class SimpleInputWindowController: NSObject {
                 context: nil
             ).height)
 
-        // 至少一行高；固定开销：上边距24 + 间距6 + hintLabel约15 + 下边距10 = 55
+        // 至少一行高；固定开销：上边距20 + 间距6 + hintLabel约15 + 下边距10 = 51
         let textHeight = max(rawHeight, font.pointSize + 4)
-        let overhead: CGFloat = 55
+        let overhead: CGFloat = 51
         let minHeight: CGFloat = 80
         let maxHeight: CGFloat = 260
         let neededHeight = max(minHeight, min(maxHeight, textHeight + overhead))

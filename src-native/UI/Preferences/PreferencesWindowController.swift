@@ -7,7 +7,7 @@ class PreferencesWindowController: NSWindowController {
     convenience init() {
         // 创建主窗口
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 500, height: 400),
+            contentRect: NSRect(x: 0, y: 0, width: 500, height: 520),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
@@ -25,7 +25,7 @@ class PreferencesWindowController: NSWindowController {
     }
 
     private func setupTabs() {
-        tabViewController.view.frame = NSRect(x: 0, y: 0, width: 500, height: 400)
+        tabViewController.view.frame = NSRect(x: 0, y: 0, width: 500, height: 520)
 
         // 添加通用页（包含快捷键、权限、开机自启动）
         let generalVC = GeneralViewController()

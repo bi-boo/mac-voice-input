@@ -2,6 +2,18 @@ import AVFoundation
 import ApplicationServices
 import Cocoa
 
+/// 外观感知卡片视图（自动跟随深色/浅色模式切换）
+private class PermissionCardView: NSView {
+    override var wantsUpdateLayer: Bool { true }
+
+    override func updateLayer() {
+        layer?.backgroundColor = NSColor.controlBackgroundColor.cgColor
+        layer?.cornerRadius = 10
+        layer?.borderWidth = 1
+        layer?.borderColor = NSColor.separatorColor.cgColor
+    }
+}
+
 /// 权限设置引导窗口控制器
 /// 用于首次启动或权限缺失时，引导用户完成必要的系统权限授权
 class PermissionSetupWindowController: NSWindowController, NSWindowDelegate {
@@ -152,12 +164,8 @@ class PermissionSetupWindowController: NSWindowController, NSWindowDelegate {
         actionButton: inout NSButton!,
         action: Selector
     ) -> NSView {
-        let card = NSView()
+        let card = PermissionCardView()
         card.wantsLayer = true
-        card.layer?.backgroundColor = NSColor.controlBackgroundColor.cgColor
-        card.layer?.cornerRadius = 10
-        card.layer?.borderWidth = 1
-        card.layer?.borderColor = NSColor.separatorColor.cgColor
         card.translatesAutoresizingMaskIntoConstraints = false
 
         // 权限图标
