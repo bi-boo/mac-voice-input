@@ -135,7 +135,12 @@ class SimpleInputWindowController: NSObject {
         if window == nil {
             createWindow()
         }
-        // 每次显示时重新定位到鼠标所在屏幕
+        // 每次显示时重置为初始高度，再重新定位
+        if let w = window {
+            var frame = w.frame
+            frame.size.height = 120
+            w.setFrame(frame, display: false)
+        }
         positionWindowOnMouseScreen()
 
         // 重置底部提示
@@ -204,7 +209,42 @@ class SimpleInputWindowController: NSObject {
 
             textView.textStorage?.setAttributedString(fullAttrString)
             textView.scrollToEndOfDocument(nil)
+            self.resizeWindowIfNeeded()
         }
+    }
+
+    /// 根据文本内容自动调整窗口高度（底部固定，向上扩展）
+    private func resizeWindowIfNeeded() {
+        guard let window = window else { return }
+
+        let textPadding: CGFloat = 24
+        let windowWidth = window.frame.width
+        let textAreaWidth = windowWidth - textPadding * 2
+
+        let font = NSFont.systemFont(ofSize: 17)
+        let rawHeight = ceil(
+            (currentRawText as NSString).boundingRect(
+                with: CGSize(width: textAreaWidth, height: 10000),
+                options: [.usesLineFragmentOrigin, .usesFontLeading],
+                attributes: [.font: font],
+                context: nil
+            ).height)
+
+        // 至少一行高；固定开销：上边距24 + 间距6 + hintLabel约15 + 下边距10 = 55
+        let textHeight = max(rawHeight, font.pointSize + 4)
+        let overhead: CGFloat = 55
+        let minHeight: CGFloat = 80
+        let maxHeight: CGFloat = 260
+        let neededHeight = max(minHeight, min(maxHeight, textHeight + overhead))
+
+        let currentHeight = window.frame.height
+        guard abs(neededHeight - currentHeight) > 2 else { return }
+
+        var newFrame = window.frame
+        let deltaHeight = neededHeight - currentHeight
+        newFrame.size.height = neededHeight
+        newFrame.origin.y -= deltaHeight  // 底部固定，向上扩展
+        window.setFrame(newFrame, display: true, animate: false)
     }
 
     private func startIndicatorTimer() {

@@ -42,12 +42,14 @@ class KeyRecorderView: NSButton {
         self.title = "请按下按键..."
         self.highlight(true)
         window?.makeFirstResponder(self)
+        HotKeyManager.shared.isPaused = true
     }
 
     private func stopRecording() {
         isRecording = false
         self.highlight(false)
         updateTitle()
+        HotKeyManager.shared.isPaused = false
     }
 
     override func keyDown(with event: NSEvent) {

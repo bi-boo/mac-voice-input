@@ -26,6 +26,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let permissionSetupController = PermissionSetupWindowController()
 
     var isRecording = false
+    private var isStarting = false  // 防止连接建立前重复触发 startRecording
     var currentText = ""  // 当前识别的文本
     private var lastFrontmostApp: NSRunningApplication?  // 记录开始录音时的前台应用
 
@@ -358,6 +359,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func startRecording() {
+        guard !isStarting && !isRecording else {
+            print("[App] startRecording 忽略：已在录音中或正在连接")
+            return
+        }
+
         // 权限检查
         MicrophoneManager.shared.checkPermission { [weak self] granted in
             guard let self = self else { return }
@@ -373,6 +379,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
             print("[App] 开始启动录音流程（模式: \(self.activeInputMode.rawValue)）")
 
+            self.isStarting = true
             // 强力重置
             self.isRecording = false
             self.asrClient.disconnect()
@@ -398,6 +405,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 print("[App] ASR 连接已就绪，启动识别")
                 self.asrClient.startRecognition()
                 self.recorder.start()
+                self.isStarting = false
                 self.isRecording = true
                 DispatchQueue.main.async {
                     self.updateUI()
@@ -415,6 +423,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if asrClient.isRecognizing {
             asrClient.sendAudio(data: Data(), isLast: true)
         }
+        isStarting = false
         isRecording = false
 
         // 根据模式隐藏对应窗口

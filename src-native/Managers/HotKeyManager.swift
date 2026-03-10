@@ -20,6 +20,9 @@ class HotKeyManager {
     // 记录当前按下的热键（用于检测松开）
     private var activeHotKeyId: String?
 
+    /// 暂停热键响应（录制快捷键期间使用）
+    var isPaused = false
+
     var onHotKeyPressed: ((String) -> Void)?
     var onHotKeyReleased: ((String) -> Void)?
 
@@ -75,6 +78,7 @@ class HotKeyManager {
     }
 
     private func handleKeyEvent(_ event: NSEvent) {
+        guard !isPaused else { return }
         let eventModifiers = event.modifierFlags.intersection([
             .command, .shift, .option, .control, .function,
         ])
@@ -101,6 +105,7 @@ class HotKeyManager {
 
     /// 处理修饰键变化
     private func handleFlagsChanged(_ event: NSEvent) {
+        guard !isPaused else { return }
         let currentMods = event.modifierFlags.intersection([
             .command, .shift, .option, .control, .function,
         ])
