@@ -1,0 +1,94 @@
+{
+    "__meta__": "ASR 接口技术参数手册 - 修改带 'value' 的项即可控制应用行为",
+    "model_name": {
+        "description": "模型名称，目前大模型 ASR 接口仅支持 bigmodel",
+        "options": [
+            "bigmodel"
+        ],
+        "value": "bigmodel"
+    },
+    "enable_itn": {
+        "description": "文本规范化（例如，将“一九七零年”转换为“1970年”）",
+        "options": [
+            true,
+            false
+        ],
+        "value": true
+    },
+    "enable_punctuation": {
+        "description": "启用自动标点符号",
+        "options": [
+            true,
+            false
+        ],
+        "value": true
+    },
+    "show_utterances": {
+        "description": "输出详细的分句、分词及时间戳信息",
+        "options": [
+            true,
+            false
+        ],
+        "value": true
+    },
+    "result_type": {
+        "description": "结果返回方式：full 为全量返回，single 为仅返回当前分句的增量结果",
+        "options": [
+            "full",
+            "single"
+        ],
+        "value": "full"
+    },
+    "enable_nonstream": {
+        "description": "开启二遍识别模式。开启后会先出流式结果，分句结束时使用非流式模型重识以提升准确率。",
+        "options": [
+            true,
+            false
+        ],
+        "value": true
+    },
+    "enable_ddc": {
+        "description": "语义顺滑。自动删除或修改语气词（如“呃”、“啊”）、重复词，提高文本可读性。",
+        "options": [
+            true,
+            false
+        ],
+        "value": true
+    },
+    "end_window_size": {
+        "description": "强制判停静音阈值（单位：毫秒）。静音超过此值则强制分句。推荐 800ms。",
+        "range": "最小 200ms",
+        "value": 800
+    },
+    "enable_accelerate_text": {
+        "description": "首字返回加速。开启后会尽快返回第一个字，但可能略微降低首字准确率。",
+        "options": [
+            true,
+            false
+        ],
+        "value": true
+    },
+    "accelerate_score": {
+        "description": "首字返回加速率。配合 enable_accelerate_text 使用。",
+        "range": "0-20，数值越大越快",
+        "value": 10
+    },
+    "audio": {
+        "description": "音频编码配置",
+        "format": {
+            "options": [
+                "pcm",
+                "wav",
+                "ogg",
+                "mp3"
+            ],
+            "value": "pcm"
+        },
+        "sample_rate": {
+            "options": [
+                16000
+            ],
+            "value": 16000
+        }
+    }
+}
