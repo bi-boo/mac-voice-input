@@ -116,9 +116,10 @@ class HotKeyManager {
             }
         }
 
-        // 2. 检测松开
+        // 2. 检测松开（只针对纯修饰键热键；普通键热键由 keyUp 事件负责）
         if let activeId = activeHotKeyId {
-            guard let activeKey = registeredKeys.first(where: { $0.identifier == activeId }) else {
+            guard let activeKey = registeredKeys.first(where: { $0.identifier == activeId }),
+                  activeKey.isModifiersOnly else {
                 return
             }
 

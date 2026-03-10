@@ -5,6 +5,9 @@ class KeyRecorderView: NSButton {
     var modifierFlags: NSEvent.ModifierFlags?
 
     private var isRecording = false
+    // 记录录制过程中按下修饰键的峰值（用于支持单修饰键热键）
+    private var peakModifiers: NSEvent.ModifierFlags = []
+    private var peakKeyCode: UInt16 = 0
 
     var onKeyRecorded: ((UInt16, NSEvent.ModifierFlags) -> Void)?
 
@@ -34,6 +37,8 @@ class KeyRecorderView: NSButton {
 
     private func startRecording() {
         isRecording = true
+        peakModifiers = []
+        peakKeyCode = 0
         self.title = "请按下按键..."
         self.highlight(true)
         window?.makeFirstResponder(self)
@@ -51,7 +56,8 @@ class KeyRecorderView: NSButton {
             self.modifierFlags = event.modifierFlags.intersection([
                 .command, .shift, .option, .control, .function,
             ])
-
+            peakModifiers = []
+            peakKeyCode = 0
             stopRecording()
             if let code = keyCode, let mods = modifierFlags {
                 onKeyRecorded?(code, mods)
@@ -61,25 +67,35 @@ class KeyRecorderView: NSButton {
         }
     }
 
-    // 监听修饰键变化以捕获纯修饰键组合（如 fn+Control）
+    // 监听修饰键变化以捕获纯修饰键组合（包括单个修饰键，如 fn）
     override func flagsChanged(with event: NSEvent) {
         if isRecording {
             let mods = event.modifierFlags.intersection([
                 .command, .shift, .option, .control, .function,
             ])
 
-            // 如果有多个修饰键同时按下，视为有效输入
-            let modCount = [
+            let currentCount = [
                 mods.contains(.command), mods.contains(.shift),
                 mods.contains(.option), mods.contains(.control),
                 mods.contains(.function),
             ].filter { $0 }.count
 
-            if modCount >= 2 {
-                // 纯修饰键组合，使用主修饰键的 keyCode
-                self.keyCode = event.keyCode
-                self.modifierFlags = mods
+            let peakCount = [
+                peakModifiers.contains(.command), peakModifiers.contains(.shift),
+                peakModifiers.contains(.option), peakModifiers.contains(.control),
+                peakModifiers.contains(.function),
+            ].filter { $0 }.count
 
+            if currentCount > peakCount {
+                // 修饰键增加，更新峰值记录
+                peakModifiers = mods
+                peakKeyCode = event.keyCode
+            } else if currentCount < peakCount && peakCount > 0 {
+                // 修饰键减少（松开），以峰值组合作为录制结果（支持单修饰键）
+                self.keyCode = peakKeyCode
+                self.modifierFlags = peakModifiers
+                peakModifiers = []
+                peakKeyCode = 0
                 stopRecording()
                 if let code = keyCode, let flags = modifierFlags {
                     onKeyRecorded?(code, flags)
