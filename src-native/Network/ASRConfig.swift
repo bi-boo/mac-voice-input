@@ -17,8 +17,8 @@ struct ASRConfig {
     let inputMode: InputMode  // 默认 .pressToToggle
 
     // 快捷键配置：按住说话模式
-    let holdHotKeyCode: UInt16  // 默认 22 (6)
-    let holdHotKeyModifiers: NSEvent.ModifierFlags  // 默认 [.control, .option, .command]
+    let holdHotKeyCode: UInt16  // 默认 58 (Option)
+    let holdHotKeyModifiers: NSEvent.ModifierFlags  // 默认 [.function, .option]
 
     // 快捷键配置：按下切换模式 - 开始录音
     let startHotKeyCode: UInt16  // 默认 22 (6)
@@ -62,8 +62,8 @@ struct ASRConfig {
                 accessKey: accessKey,
                 resourceId: resourceId,
                 inputMode: .pressToToggle,
-                holdHotKeyCode: 59,
-                holdHotKeyModifiers: [.function, .control],
+                holdHotKeyCode: 58,
+                holdHotKeyModifiers: [.function, .option],
                 startHotKeyCode: 22,
                 startHotKeyModifiers: [.control, .option, .command],
                 stopHotKeyCode: 36,
